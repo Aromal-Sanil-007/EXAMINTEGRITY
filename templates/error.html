@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ title }} | EXAMINTEGRITY</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            background:
+                radial-gradient(circle at top left,
+                rgba(239, 68, 68, 0.15),
+                transparent 35%),
+                #080b12;
+        }
+
+        .error-card {
+            width: 100%;
+            max-width: 520px;
+            padding: 42px 35px;
+            text-align: center;
+            background: rgba(20, 25, 38, 0.95);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 24px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+        }
+
+        .error-icon {
+            width: 82px;
+            height: 82px;
+            margin: 0 auto 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 42px;
+            color: #fecaca;
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.18);
+        }
+
+        .error-card h1 {
+            margin-bottom: 14px;
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .error-card p {
+            margin-bottom: 28px;
+            color: #aeb8ca;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .error-message {
+            margin-bottom: 28px;
+            padding: 15px 18px;
+            color: #fecaca;
+            background: rgba(127, 29, 29, 0.25);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .error-button {
+            display: inline-block;
+            padding: 13px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .error-button.primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+        }
+
+        .error-button.secondary {
+            color: #dbeafe;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .error-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.12);
+        }
+
+        .error-footer {
+            margin-top: 25px;
+            color: #667085;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .error-card {
+                padding: 32px 22px;
+            }
+
+            .error-card h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-page">
+        <div class="error-card">
+
+            <div class="error-icon">
+                ⚠
+            </div>
+
+            <h1>{{ title }}</h1>
+
+            <p>
+                Something needs your attention before continuing.
+            </p>
+
+            <div class="error-message">
+                {{ message }}
+            </div>
+
+            <div class="error-actions">
+                <a href="{{ back_url }}" class="error-button primary">
+                    {{ back_text }}
+                </a>
+
+                <a href="/" class="error-button secondary">
+                    Dashboard
+                </a>
+            </div>
+
+            <div class="error-footer">
+                EXAMINTEGRITY • SECURE EXAMINATION SYSTEM
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

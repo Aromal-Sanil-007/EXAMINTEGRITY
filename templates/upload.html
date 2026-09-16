@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Secure Paper Upload | EXAMINTEGRITY</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="upload-page">
+
+        <div class="upload-card">
+
+            <div class="upload-header">
+
+                <div class="brand-icon">✦</div>
+
+                <h1>Secure New Paper</h1>
+
+                <p>
+                    Upload a PDF to generate its digital fingerprint
+                    and record its details.
+                </p>
+
+            </div>
+
+            <form action="/upload-paper"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <label for="paper">
+                    Select Examination Paper (PDF)
+                </label>
+
+                <input
+                    type="file"
+                    id="paper"
+                    name="paper"
+                    accept=".pdf,application/pdf"
+                    required
+                >
+
+                <p class="upload-note">
+                    Only PDF files are allowed.
+                    Maximum file size: 16 MB.
+                </p>
+
+                <p class="upload-note">
+                    Prototype only. Use a dummy examination paper.
+                </p>
+
+                <button type="submit" class="upload-submit">
+                    🔐 Secure & Generate Fingerprint
+                </button>
+
+            </form>
+
+            <a href="/" class="back-link">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

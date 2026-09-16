@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Audit Trail | EXAMINTEGRITY</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(0, 217, 255, 0.08),
+                    transparent 30%
+                ),
+                #070b12;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .brand span {
+            color: #00d9ff;
+        }
+
+        .status {
+            color: #43ff91;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .main-card {
+            background: #0d131d;
+            border: 1px solid #202b39;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .audit-icon {
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.22);
+            font-size: 25px;
+        }
+
+        .title-text h1 {
+            font-size: 27px;
+            margin-bottom: 6px;
+        }
+
+        .title-text p {
+            color: #7e8c9f;
+            font-size: 13px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: #080d14;
+            border: 1px solid #1d2937;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .summary-label {
+            color: #69788b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .summary-number {
+            font-size: 25px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 15px;
+        }
+
+        .activity-header h2 {
+            font-size: 17px;
+        }
+
+        .activity-header span {
+            color: #69788b;
+            font-size: 12px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 5px;
+            bottom: 5px;
+            width: 1px;
+            background: #263342;
+        }
+
+        .audit-entry {
+            position: relative;
+            display: flex;
+            gap: 16px;
+            padding-bottom: 25px;
+        }
+
+        .audit-entry:last-child {
+            padding-bottom: 0;
+        }
+
+        .event-icon {
+            position: absolute;
+            left: -25px;
+            top: 0;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #101823;
+            border: 1px solid #334354;
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        .event-upload .event-icon {
+            border-color: #1597d0;
+            color: #33c7ff;
+        }
+
+        .event-verified .event-icon {
+            border-color: #28b86a;
+            color: #43ff91;
+        }
+
+        .event-duplicate .event-icon {
+            border-color: #d39c2e;
+            color: #ffd45a;
+        }
+
+        .event-deleted .event-icon {
+            border-color: #ff5269;
+            color: #ff5269;
+        }
+
+        .event-security .event-icon {
+            border-color: #ffa64d;
+            color: #ffa64d;
+        }
+
+        .event-error .event-icon {
+            border-color: #c84d4d;
+            color: #ff7777;
+        }
+
+        .event-card {
+            width: 100%;
+            background: #080d14;
+            border: 1px solid #1d2937;
+            border-radius: 12px;
+            padding: 17px 18px;
+            transition: 0.2s;
+        }
+
+        .event-card:hover {
+            border-color: #334558;
+            transform: translateX(2px);
+        }
+
+        .event-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 9px;
+        }
+
+        .event-name {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.7px;
+        }
+
+        .event-upload .event-name {
+            color: #33c7ff;
+        }
+
+        .event-verified .event-name {
+            color: #43ff91;
+        }
+
+        .event-duplicate .event-name {
+            color: #ffd45a;
+        }
+
+        .event-deleted .event-name {
+            color: #ff5269;
+        }
+
+        .event-security .event-name {
+            color: #ffa64d;
+        }
+
+        .event-error .event-name {
+            color: #ff7777;
+        }
+
+        .event-time {
+            color: #627184;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .event-details {
+            color: #8997a8;
+            font-size: 13px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .event-id {
+            margin-top: 11px;
+            color: #4e5c6d;
+            font-size: 10px;
+            letter-spacing: 0.6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #080d14;
+            border: 1px solid #1d2937;
+            border-radius: 12px;
+        }
+
+        .empty-icon {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #6f7e91;
+            font-size: 13px;
+        }
+
+        .security-footer {
+            margin-top: 28px;
+            padding: 17px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: rgba(0, 217, 255, 0.04);
+            border: 1px solid rgba(0, 217, 255, 0.13);
+            border-radius: 10px;
+        }
+
+        .security-footer-icon {
+            font-size: 20px;
+        }
+
+        .security-footer-text {
+            color: #718095;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .security-footer-text strong {
+            color: #cbd7e4;
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 25px auto 0;
+            padding: 11px 20px;
+            border-radius: 8px;
+            border: 1px solid #2d3d50;
+            background: #111a25;
+            color: #b9c7d6;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            color: #00d9ff;
+            border-color: #00d9ff;
+        }
+
+        @media (max-width: 750px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .page {
+                padding: 25px 14px;
+            }
+
+            .main-card {
+                padding: 22px 17px;
+            }
+
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .title-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .title-text h1 {
+                font-size: 23px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .summary-card {
+                padding: 14px;
+            }
+
+            .summary-number {
+                font-size: 21px;
+            }
+
+            .event-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <div class="container">
+
+            <div class="top-header">
+                <div class="brand">
+                    EXAM<span>INTEGRITY</span>
+                </div>
+
+                <div class="status">
+                    ● AUDIT SYSTEM ACTIVE
+                </div>
+            </div>
+
+            <div class="main-card">
+
+                <div class="title-section">
+                    <div class="title-left">
+
+                        <div class="audit-icon">
+                            📋
+                        </div>
+
+                        <div class="title-text">
+                            <h1>Audit Trail</h1>
+
+                            <p>
+                                Complete security activity history
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SUMMARY CARDS -->
+
+                <div class="summary-grid">
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Total Events
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs|length }}
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Papers Uploaded
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs
+                               |selectattr("action", "equalto", "PAPER UPLOADED")
+                               |list
+                               |length }}
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Verifications
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs
+                               |selectattr("action", "equalto", "PAPER VERIFIED")
+                               |list
+                               |length }}
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Blocked Uploads
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs
+                               |selectattr("action", "equalto", "DUPLICATE UPLOAD BLOCKED")
+                               |list
+                               |length }}
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Security Events
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs
+                               |selectattr("action", "equalto", "SECURITY EVENT")
+                               |list
+                               |length }}
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-label">
+                            Papers Deleted
+                        </div>
+
+                        <div class="summary-number">
+                            {{ audit_logs
+                               |selectattr("action", "equalto", "PAPER DELETED")
+                               |list
+                               |length }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="activity-header">
+                    <h2>Security Activity</h2>
+
+                    <span>
+                        Latest events first
+                    </span>
+                </div>
+
+                <!-- AUDIT EVENTS -->
+
+                {% if audit_logs %}
+
+                <div class="timeline">
+
+                    {% for log in audit_logs %}
+
+                    {% if log["action"] == "PAPER UPLOADED" %}
+
+                        <div class="audit-entry event-upload">
+                            <div class="event-icon">📄</div>
+
+                    {% elif log["action"] == "PAPER VERIFIED" %}
+
+                        <div class="audit-entry event-verified">
+                            <div class="event-icon">🔍</div>
+
+                    {% elif log["action"] == "PAPER DELETED" %}
+
+                        <div class="audit-entry event-deleted">
+                            <div class="event-icon">🗑️</div>
+
+                    {% elif log["action"] == "DUPLICATE UPLOAD BLOCKED" %}
+
+                        <div class="audit-entry event-duplicate">
+                            <div class="event-icon">🚫</div>
+
+                    {% elif log["action"] == "SECURITY EVENT" %}
+
+                        <div class="audit-entry event-security">
+                            <div class="event-icon">🛡️</div>
+
+                    {% else %}
+
+                        <div class="audit-entry event-error">
+                            <div class="event-icon">⚠️</div>
+
+                    {% endif %}
+
+                            <div class="event-card">
+
+                                <div class="event-top">
+
+                                    <div class="event-name">
+                                        {{ log["action"] }}
+                                    </div>
+
+                                    <div class="event-time">
+                                        {{ log["created_at"] }}
+                                    </div>
+
+                                </div>
+
+                                <div class="event-details">
+                                    {{ log["details"] }}
+                                </div>
+
+                                <div class="event-id">
+                                    EVENT ID: #{{ log["id"] }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🛡️
+                    </div>
+
+                    <h3>
+                        No Security Activity Yet
+                    </h3>
+
+                    <p>
+                        Upload or verify an examination paper to create
+                        the first audit event.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                <div class="security-footer">
+
+                    <div class="security-footer-icon">
+                        🔐
+                    </div>
+
+                    <div class="security-footer-text">
+
+                        <strong>
+                            Security Logging Active
+                        </strong>
+
+                        <br>
+
+                        Every paper upload, verification attempt,
+                        deletion, and blocked duplicate upload is
+                        recorded with a timestamp for traceability.
+
+                    </div>
+
+                </div>
+
+                <a href="/" class="back-button">
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Verify Paper | EXAMINTEGRITY</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(0, 200, 255, 0.08), transparent 30%),
+                #070b12;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+        }
+
+        /* HEADER */
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .brand span {
+            color: #00d9ff;
+        }
+
+        .status {
+            color: #43ff91;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* MAIN CARD */
+
+        .card {
+            background: #0d131d;
+            border: 1px solid #202b39;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .shield {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.25);
+
+            font-size: 30px;
+        }
+
+        .title-section h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .title-section p {
+            color: #8d9aaa;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* SECTION */
+
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #dce7f2;
+        }
+
+        .section-description {
+            color: #748295;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        /* SELECT */
+
+        select {
+            width: 100%;
+            padding: 15px;
+
+            background: #080d14;
+            color: #ffffff;
+
+            border: 1px solid #2a3747;
+            border-radius: 10px;
+
+            font-size: 14px;
+            outline: none;
+
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: #00d9ff;
+        }
+
+        /* PAPER INFO */
+
+        .paper-info {
+            margin-top: 15px;
+            padding: 20px;
+
+            background: #080d14;
+            border: 1px solid #1d2937;
+            border-radius: 12px;
+        }
+
+        .paper-info-title {
+            color: #00d9ff;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #0d131d;
+            border: 1px solid #1d2937;
+            border-radius: 9px;
+            padding: 13px;
+        }
+
+        .info-label {
+            display: block;
+            color: #667589;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            color: #dce7f2;
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+        /* FILE UPLOAD */
+
+        .upload-box {
+            position: relative;
+
+            border: 1px dashed #334457;
+            border-radius: 12px;
+
+            background: #080d14;
+
+            padding: 28px 20px;
+            text-align: center;
+
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #00d9ff;
+            background: #0a111a;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .upload-box h3 {
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .upload-box p {
+            color: #718095;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .file-label {
+            display: inline-block;
+
+            padding: 11px 18px;
+
+            background: #111b27;
+            border: 1px solid #2d3d50;
+            border-radius: 8px;
+
+            color: #dce7f2;
+            font-size: 13px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .file-label:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        #suspected_paper {
+            display: none;
+        }
+
+        #file-name {
+            margin-top: 14px;
+            color: #43ff91;
+            font-size: 13px;
+            min-height: 18px;
+        }
+
+        /* SECURITY INFO */
+
+        .security-box {
+            display: flex;
+            gap: 14px;
+
+            padding: 18px;
+
+            background: rgba(0, 217, 255, 0.04);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+        }
+
+        .security-icon {
+            font-size: 22px;
+        }
+
+        .security-text h3 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #dce7f2;
+        }
+
+        .security-text p {
+            color: #77869a;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* BUTTON */
+
+        .verify-button {
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: linear-gradient(
+                135deg,
+                #00c8f5,
+                #008ec4
+            );
+
+            color: #ffffff;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow: 0 8px 25px rgba(0, 180, 240, 0.15);
+
+            transition: 0.2s;
+        }
+
+        .verify-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 30px rgba(0, 180, 240, 0.25);
+        }
+
+        .verify-button:disabled {
+            background: #263342;
+            color: #697789;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* BACK LINK */
+
+        .back-link {
+            display: block;
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #7f8da0;
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+        .back-link:hover {
+            color: #00d9ff;
+        }
+
+        /* NO PAPERS */
+
+        .empty-message {
+            padding: 20px;
+            text-align: center;
+
+            background: #080d14;
+            border: 1px solid #263342;
+            border-radius: 10px;
+
+            color: #8795a7;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 650px) {
+
+            .page {
+                padding: 25px 14px;
+            }
+
+            .card {
+                padding: 24px 18px;
+            }
+
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .title-section h1 {
+                font-size: 25px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="top-header">
+
+            <div class="brand">
+                EXAM<span>INTEGRITY</span>
+            </div>
+
+            <div class="status">
+                ● SECURE SYSTEM
+            </div>
+
+        </div>
+
+
+        <!-- MAIN CARD -->
+
+        <div class="card">
+
+            <!-- TITLE -->
+
+            <div class="title-section">
+
+                <div class="shield">
+                    🔐
+                </div>
+
+                <h1>Verify Examination Paper</h1>
+
+                <p>
+                    Compare a suspected examination paper against a
+                    registered original using a secure SHA-256 digital fingerprint.
+                </p>
+
+            </div>
+
+
+            {% if papers %}
+
+            <form
+                action="/verify-paper"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <!-- STEP 1 -->
+
+                <div class="section">
+
+                    <div class="section-title">
+                        01. Select Registered Paper
+                    </div>
+
+                    <div class="section-description">
+                        Choose the original examination paper that you want to verify against.
+                    </div>
+
+                    <select
+                        id="paper_id"
+                        name="paper_id"
+                        required
+                        onchange="updatePaperInfo()"
+                    >
+
+                        <option value="" disabled selected>
+                            -- Select a registered examination paper --
+                        </option>
+
+                        {% for paper in papers %}
+
+                        <option
+                            value="{{ paper['id'] }}"
+                            data-filename="{{ paper['filename'] }}"
+                            data-uploaded="{{ paper['uploaded_at'] }}"
+                            data-uploader="{{ paper['uploaded_by'] }}"
+                        >
+                            Paper #{{ paper['id'] }} — {{ paper['filename'] }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <!-- SELECTED PAPER INFORMATION -->
+
+                    <div
+                        class="paper-info"
+                        id="paper-info"
+                        style="display: none;"
+                    >
+
+                        <div class="paper-info-title">
+                            REGISTERED PAPER DETAILS
+                        </div>
+
+                        <div class="info-grid">
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Paper ID
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="info-id"
+                                >
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Filename
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="info-filename"
+                                >
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Registered By
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="info-uploader"
+                                >
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Registered On
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    id="info-uploaded"
+                                >
+                                    -
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span class="info-label">
+                                    Status
+                                </span>
+
+                                <span
+                                    class="info-value"
+                                    style="color: #43ff91;"
+                                >
+                                    ✓ REGISTERED
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 2 -->
+
+                <div class="section">
+
+                    <div class="section-title">
+                        02. Upload Suspected Paper
+                    </div>
+
+                    <div class="section-description">
+                        Select the PDF file that you want to compare with the registered paper.
+                    </div>
+
+
+                    <div class="upload-box">
+
+                        <div class="upload-icon">
+                            📄
+                        </div>
+
+                        <h3>
+                            Select Suspected Examination Paper
+                        </h3>
+
+                        <p>
+                            Only PDF files are accepted
+                        </p>
+
+
+                        <label
+                            for="suspected_paper"
+                            class="file-label"
+                        >
+                            Choose PDF File
+                        </label>
+
+
+                        <input
+                            type="file"
+                            id="suspected_paper"
+                            name="suspected_paper"
+                            accept=".pdf,application/pdf"
+                            required
+                            onchange="showFileName()"
+                        >
+
+
+                        <div id="file-name">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SECURITY EXPLANATION -->
+
+                <div class="security-box">
+
+                    <div class="security-icon">
+                        🛡️
+                    </div>
+
+                    <div class="security-text">
+
+                        <h3>
+                            How does verification work?
+                        </h3>
+
+                        <p>
+                            EXAMINTEGRITY generates a unique SHA-256 fingerprint
+                            from the suspected PDF and compares it with the
+                            fingerprint stored for the registered paper.
+                            Identical fingerprints indicate an exact digital match.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VERIFY BUTTON -->
+
+                <button
+                    type="submit"
+                    class="verify-button"
+                    id="verify-button"
+                    disabled
+                >
+                    🔐 Verify Paper Integrity
+                </button>
+
+            </form>
+
+
+            {% else %}
+
+            <!-- NO REGISTERED PAPERS -->
+
+            <div class="empty-message">
+
+                <p>
+                    No examination papers are currently registered.
+                </p>
+
+                <p style="margin-top: 8px;">
+                    Upload an original paper first before attempting verification.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- BACK -->
+
+            <a
+                href="/"
+                class="back-link"
+            >
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function updatePaperInfo() {
+
+        const select = document.getElementById("paper_id");
+
+        const selectedOption =
+            select.options[select.selectedIndex];
+
+        const paperInfo =
+            document.getElementById("paper-info");
+
+        const verifyButton =
+            document.getElementById("verify-button");
+
+
+        if (selectedOption.value === "") {
+
+            paperInfo.style.display = "none";
+
+            verifyButton.disabled = true;
+
+            return;
+        }
+
+
+        document.getElementById("info-id").textContent =
+            selectedOption.value;
+
+        document.getElementById("info-filename").textContent =
+            selectedOption.dataset.filename;
+
+        document.getElementById("info-uploader").textContent =
+            selectedOption.dataset.uploader;
+
+        document.getElementById("info-uploaded").textContent =
+            selectedOption.dataset.uploaded;
+
+
+        paperInfo.style.display = "block";
+
+        verifyButton.disabled = false;
+    }
+
+
+    function showFileName() {
+
+        const input =
+            document.getElementById("suspected_paper");
+
+        const fileName =
+            document.getElementById("file-name");
+
+
+        if (input.files.length > 0) {
+
+            fileName.textContent =
+                "✓ Selected: " + input.files[0].name;
+
+        } else {
+
+            fileName.textContent = "";
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>

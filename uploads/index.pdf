@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXAMINTEGRITY | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-icon">✦</div>
+                <div>
+                    <h2>EXAMINTEGRITY</h2>
+                    <p>Examination Security</p>
+                </div>
+            </div>
+
+            <nav class="navigation">
+
+                <a href="#" class="nav-link active">
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+                <a href="/upload" class="nav-link">
+                    <span>▣</span>
+                    Secure Papers
+                </a>
+
+                <a href="#" class="nav-link">
+                    <span>⌘</span>
+                    Audit Trail
+                </a>
+
+                <a href="{{ url_for('verify_page') }}" class="nav-link">
+                    <span>✓</span>
+                    Leak Verification
+                </a>
+
+                <a href="#" class="nav-link">
+                    <span>▤</span>
+                    Reports
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+                <p class="small-label">SYSTEM STATUS</p>
+
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    All systems operational
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <p class="breadcrumb">ADMINISTRATION / OVERVIEW</p>
+                    <h1>Good afternoon, Administrator.</h1>
+                    <p class="subtitle">
+                        Monitor examination security and investigate suspicious activity.
+                    </p>
+                </div>
+
+                <div class="profile">
+                    <div class="avatar">A</div>
+                    <div>
+                        <strong>Admin User</strong>
+                        <p>Examination Authority</p>
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- Statistics -->
+            <section class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>Papers Secured</span>
+                        <span class="stat-icon">▣</span>
+                    </div>
+                    <h2>24</h2>
+                    <p class="positive">↑ 8.2% <span>this month</span></p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>Access Events</span>
+                        <span class="stat-icon">◷</span>
+                    </div>
+                    <h2>156</h2>
+                    <p class="positive">↑ 12.4% <span>this month</span></p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>Claims Reviewed</span>
+                        <span class="stat-icon">⌕</span>
+                    </div>
+                    <h2>12</h2>
+                    <p class="neutral">4 pending review</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>System Status</span>
+                        <span class="stat-icon">✓</span>
+                    </div>
+                    <h2 class="secure-text">Secure</h2>
+                    <p class="positive">All services operational</p>
+                </div>
+
+            </section>
+
+            <!-- Main Dashboard Grid -->
+            <section class="dashboard-grid">
+
+                <!-- Security Overview -->
+                <div class="panel security-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Security Overview</h3>
+                            <p>Current examination integrity status</p>
+                        </div>
+
+                        <span class="badge success">Healthy</span>
+                    </div>
+
+                    <div class="security-score">
+                        <div class="score-circle">
+                            <span>98</span>
+                            <small>/100</small>
+                        </div>
+
+                        <div>
+                            <h4>Security Score</h4>
+                            <p>
+                                Based on simulated access and audit data.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="progress-row">
+                        <div>
+                            <span>Paper encryption</span>
+                            <strong>100%</strong>
+                        </div>
+                        <div class="progress-bar">
+                            <div style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-row">
+                        <div>
+                            <span>Audit integrity</span>
+                            <strong>98%</strong>
+                        </div>
+                        <div class="progress-bar">
+                            <div style="width: 98%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-row">
+                        <div>
+                            <span>Access compliance</span>
+                            <strong>96%</strong>
+                        </div>
+                        <div class="progress-bar">
+                            <div style="width: 96%"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Quick Actions</h3>
+                            <p>Manage examination security</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button class="action-button">
+                            <span>＋</span>
+                            <div>
+                                <strong>Secure New Paper</strong>
+                                <small>Upload and fingerprint</small>
+                            </div>
+                        </button>
+
+                        <button class="action-button">
+                            <span>⌕</span>
+                            <div>
+                                <strong>Verify Leak Claim</strong>
+                                <small>Analyze submitted material</small>
+                            </div>
+                        </button>
+
+                        <button class="action-button">
+                            <span>▤</span>
+                            <div>
+                                <strong>View Audit Trail</strong>
+                                <small>Inspect recorded events</small>
+                            </div>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+<!-- Secured Papers -->
+<section class="panel activity-panel">
+
+    <div class="panel-header">
+        <div>
+            <h3>Secured Examination Papers</h3>
+            <p>Documents registered in the local database</p>
+        </div>
+
+        <a href="/upload" class="outline-button">
+            + Upload Paper
+        </a>
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Filename</th>
+                    <th>Fingerprint</th>
+                    <th>Uploaded By</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for paper in papers %}
+
+                <tr>
+                    <td>{{ paper["id"] }}</td>
+                    <td>{{ paper["filename"] }}</td>
+
+                    <td>
+                        <span class="fingerprint">
+                            {{ paper["fingerprint"][:16] }}...
+                        </span>
+                    </td>
+
+                    <td>{{ paper["uploaded_by"] }}</td>
+                    <td>{{ paper["uploaded_at"] }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="5">
+                        No papers uploaded yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- Recent Audit Activity -->
+<section class="panel activity-panel">
+
+    <div class="panel-header">
+        <div>
+            <h3>Recent Audit Activity</h3>
+            <p>Latest events recorded by the system</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Document</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for log in audit_logs %}
+
+                <tr>
+                    <td>{{ log["action"] }}</td>
+
+                    <td>{{ log["details"] }}</td>
+
+                    <td>Admin</td>
+
+                    <td>
+                        <span class="status-badge success">
+                            Recorded
+                        </span>
+                    </td>
+
+                    <td>{{ log["created_at"] }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="5">
+                        No audit activity recorded yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+            <footer>
+                EXAMINTEGRITY © 2026 · Prototype for demonstration
+            </footer>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
