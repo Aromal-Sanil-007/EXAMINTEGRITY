@@ -17,17 +17,21 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 UPLOAD_FOLDER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    BASE_DIR,
     "uploads"
 )
 
 DATABASE_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    BASE_DIR,
     "examintegrity.db"
 )
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Maximum upload size: 16 MB
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -52,7 +56,12 @@ def add_audit_log(action, details):
 
     conn.execute(
         """
-        INSERT INTO audit_logs (action, details, created_at)
+        INSERT INTO audit_logs
+        (
+            action,
+            details,
+            created_at
+        )
         VALUES (?, ?, ?)
         """,
         (
@@ -122,10 +131,12 @@ def init_db():
         """
     )
 
-    # Add stored_filename to older databases created before this field existed.
+    # Add stored_filename to older databases if missing
     paper_columns = [
         row["name"]
-        for row in conn.execute("PRAGMA table_info(papers)").fetchall()
+        for row in conn.execute(
+            "PRAGMA table_info(papers)"
+        ).fetchall()
     ]
 
     if "stored_filename" not in paper_columns:
@@ -142,19 +153,30 @@ def init_db():
 # ============================================================
 
 def is_valid_pdf(file_data):
+    """
+    Checks whether the uploaded file begins
+    with the standard PDF file signature.
+    """
     if not file_data:
         return False
 
     return file_data.startswith(b"%PDF-")
 
 
+# ============================================================
+# PDF TEXT EXTRACTION
+# ============================================================
+
 def extract_pdf_text(file_path):
     """
-    Extract readable text from every page of a PDF.
-    Scanned image-only PDFs may return no text.
+    Extracts readable text from every page of a PDF.
+
+    Note:
+    Scanned image-only PDFs may return empty text.
     """
     try:
         reader = PdfReader(file_path)
+
         extracted_text = ""
 
         for page in reader.pages:
@@ -170,13 +192,31 @@ def extract_pdf_text(file_path):
         return ""
 
 
+# ============================================================
+# TEXT NORMALIZATION
+# ============================================================
+
 def normalize_text(text):
+    """
+    Converts text to lowercase and removes
+    unnecessary spaces.
+    """
     text = text.lower()
     text = " ".join(text.split())
+
     return text
 
 
+# ============================================================
+# TEXT SIMILARITY CALCULATION
+# ============================================================
+
 def calculate_text_similarity(original_text, uploaded_text):
+    """
+    Calculates the similarity between two PDF texts.
+
+    Returns a percentage between 0 and 100.
+    """
     original_text = normalize_text(original_text)
     uploaded_text = normalize_text(uploaded_text)
 
@@ -193,19 +233,23 @@ def calculate_text_similarity(original_text, uploaded_text):
 
 
 # ============================================================
-# FILE PATH HELPERS
+# FILE PATH HELPER
 # ============================================================
 
 def find_stored_file(paper):
     """
-    Finds the physical PDF belonging to a database record.
+    Finds the physical PDF connected to a database record.
 
     New records use stored_filename.
-    Older records are located by matching the original filename
-    or the UUID_originalfilename pattern.
+
+    Older records may use:
+    1. The original filename
+    2. A UUID_originalfilename pattern
     """
+
     stored_filename = paper["stored_filename"]
 
+    # Check the stored filename used by new records
     if stored_filename:
         stored_path = os.path.join(
             app.config["UPLOAD_FOLDER"],
@@ -217,6 +261,7 @@ def find_stored_file(paper):
 
     original_filename = paper["filename"]
 
+    # Check the original filename
     direct_path = os.path.join(
         app.config["UPLOAD_FOLDER"],
         original_filename
@@ -225,8 +270,11 @@ def find_stored_file(paper):
     if os.path.isfile(direct_path):
         return direct_path
 
+    # Check older UUID_filename files
     try:
-        possible_files = os.listdir(app.config["UPLOAD_FOLDER"])
+        possible_files = os.listdir(
+            app.config["UPLOAD_FOLDER"]
+        )
 
         matching_files = [
             item
@@ -236,6 +284,7 @@ def find_stored_file(paper):
 
         if matching_files:
             matching_files.sort()
+
             return os.path.join(
                 app.config["UPLOAD_FOLDER"],
                 matching_files[0]
@@ -276,15 +325,27 @@ def home():
     conn = get_db_connection()
 
     papers = conn.execute(
-        "SELECT * FROM papers ORDER BY id DESC"
+        """
+        SELECT *
+        FROM papers
+        ORDER BY id DESC
+        """
     ).fetchall()
 
     audit_logs = conn.execute(
-        "SELECT * FROM audit_logs ORDER BY id DESC LIMIT 10"
+        """
+        SELECT *
+        FROM audit_logs
+        ORDER BY id DESC
+        LIMIT 10
+        """
     ).fetchall()
 
     total_papers = conn.execute(
-        "SELECT COUNT(*) FROM papers"
+        """
+        SELECT COUNT(*)
+        FROM papers
+        """
     ).fetchone()[0]
 
     total_verifications = conn.execute(
@@ -347,7 +408,11 @@ def verify_page():
     conn = get_db_connection()
 
     papers = conn.execute(
-        "SELECT * FROM papers ORDER BY id DESC"
+        """
+        SELECT *
+        FROM papers
+        ORDER BY id DESC
+        """
     ).fetchall()
 
     conn.close()
@@ -364,15 +429,17 @@ def verify_page():
 
 @app.route("/verify-paper", methods=["POST"])
 def verify_paper():
+
     paper_id = request.form.get("paper_id")
 
-    # Support the current field name and older possible field names.
+    # Supports the current and older input names
     uploaded_file = (
         request.files.get("suspected_paper")
         or request.files.get("verification_file")
         or request.files.get("file")
     )
 
+    # Check paper selection
     if not paper_id:
         return show_error(
             "Missing Paper",
@@ -382,6 +449,7 @@ def verify_paper():
             400
         )
 
+    # Check uploaded file
     if uploaded_file is None:
         return show_error(
             "No File Selected",
@@ -391,6 +459,7 @@ def verify_paper():
             400
         )
 
+    # Check filename
     if uploaded_file.filename == "":
         return show_error(
             "No File Selected",
@@ -400,8 +469,10 @@ def verify_paper():
             400
         )
 
+    # Validate paper ID
     try:
         paper_id = int(paper_id)
+
     except (TypeError, ValueError):
         return show_error(
             "Invalid Paper",
@@ -411,10 +482,14 @@ def verify_paper():
             400
         )
 
+    # Validate file extension
     if not uploaded_file.filename.lower().endswith(".pdf"):
         add_audit_log(
             "SECURITY EVENT",
-            f"Verification rejected non-PDF file '{uploaded_file.filename}'."
+            (
+                "Verification rejected non-PDF file "
+                f"'{uploaded_file.filename}'."
+            )
         )
 
         return show_error(
@@ -425,12 +500,17 @@ def verify_paper():
             400
         )
 
+    # Read uploaded file
     uploaded_bytes = uploaded_file.read()
 
+    # Validate PDF signature
     if not is_valid_pdf(uploaded_bytes):
         add_audit_log(
             "SECURITY EVENT",
-            f"Verification rejected invalid PDF file '{uploaded_file.filename}'."
+            (
+                "Verification rejected invalid PDF file "
+                f"'{uploaded_file.filename}'."
+            )
         )
 
         return show_error(
@@ -441,17 +521,26 @@ def verify_paper():
             400
         )
 
-    uploaded_hash = hashlib.sha256(uploaded_bytes).hexdigest()
+    # Generate SHA-256 hash
+    uploaded_hash = hashlib.sha256(
+        uploaded_bytes
+    ).hexdigest()
 
+    # Retrieve original registered paper
     conn = get_db_connection()
 
     paper = conn.execute(
-        "SELECT * FROM papers WHERE id = ?",
+        """
+        SELECT *
+        FROM papers
+        WHERE id = ?
+        """,
         (paper_id,)
     ).fetchone()
 
     conn.close()
 
+    # Check paper existence
     if paper is None:
         return show_error(
             "Paper Not Found",
@@ -462,38 +551,57 @@ def verify_paper():
         )
 
     original_hash = paper["fingerprint"]
+
+    # Default similarity value
     similarity = 0
 
-    # --------------------------------------------------------
-    # EXACT FILE MATCH
-    # --------------------------------------------------------
+    # ========================================================
+    # EXACT MATCH
+    # ========================================================
 
-    if hmac.compare_digest(uploaded_hash, original_hash):
+    if hmac.compare_digest(
+        uploaded_hash,
+        original_hash
+    ):
         result = "EXACT MATCH"
+
+        # Exact match is treated as 100% similarity
+        similarity = 100
 
         result_message = (
             "The suspected paper has exactly the same SHA-256 "
-            "fingerprint as the registered paper."
+            "fingerprint as the registered paper. "
+            "This is treated as a high-risk exact match."
         )
 
-    # --------------------------------------------------------
-    # TEXT SIMILARITY CHECK
-    # --------------------------------------------------------
+    # ========================================================
+    # DIFFERENT HASH: TEXT SIMILARITY CHECK
+    # ========================================================
 
     else:
-        temporary_filename = f"verify_{uuid.uuid4().hex}.pdf"
+
+        temporary_filename = (
+            f"verify_{uuid.uuid4().hex}.pdf"
+        )
+
         temporary_path = os.path.join(
             app.config["UPLOAD_FOLDER"],
             temporary_filename
         )
 
         try:
-            with open(temporary_path, "wb") as temporary_file:
+            # Save uploaded file temporarily
+            with open(
+                temporary_path,
+                "wb"
+            ) as temporary_file:
                 temporary_file.write(uploaded_bytes)
 
+            # Locate original registered PDF
             original_file_path = find_stored_file(paper)
 
             if original_file_path is None:
+
                 result = "DIFFERENT FILE"
 
                 result_message = (
@@ -502,51 +610,93 @@ def verify_paper():
                 )
 
             else:
-                original_text = extract_pdf_text(original_file_path)
-                uploaded_text = extract_pdf_text(temporary_path)
 
+                # Extract text from both PDFs
+                original_text = extract_pdf_text(
+                    original_file_path
+                )
+
+                uploaded_text = extract_pdf_text(
+                    temporary_path
+                )
+
+                # Calculate similarity percentage
                 similarity = calculate_text_similarity(
                     original_text,
                     uploaded_text
                 )
 
-                if similarity >= 85:
+                # ====================================================
+                # RED ZONE: 70% AND ABOVE
+                # ====================================================
+
+                if similarity >= 70:
+
                     result = "MODIFIED COPY DETECTED"
 
                     result_message = (
-                        "The SHA-256 fingerprints are different, but the "
-                        f"extracted text is {similarity}% similar. "
+                        "The SHA-256 fingerprints are different, "
+                        f"but the extracted text is {similarity}% similar. "
                         "This may be a modified copy of the registered paper."
                     )
 
+                # ====================================================
+                # YELLOW ZONE: 50% TO 69.999%
+                # ====================================================
+
+                elif similarity >= 50:
+
+                    result = "POSSIBLE SIMILARITY"
+
+                    result_message = (
+                        "The uploaded paper has a different fingerprint "
+                        f"and {similarity}% text similarity with the "
+                        "registered paper. Manual checking is recommended."
+                    )
+
+                # ====================================================
+                # GREEN ZONE: 0% TO 49.999%
+                # ====================================================
+
                 else:
+
                     result = "DIFFERENT FILE"
 
                     result_message = (
-                        "The suspected paper has a different fingerprint "
+                        "The uploaded paper has a different fingerprint "
                         f"and only {similarity}% text similarity with the "
                         "registered paper."
                     )
 
         except Exception as error:
+
             print("VERIFICATION ERROR:", error)
 
             result = "DIFFERENT FILE"
+
             result_message = (
-                "The files have different fingerprints. Text comparison "
-                "could not be completed."
+                "The files have different fingerprints. "
+                "Text comparison could not be completed."
             )
 
         finally:
+
+            # Delete temporary verification file
             if os.path.exists(temporary_path):
                 try:
                     os.remove(temporary_path)
+
                 except OSError:
                     pass
 
+    # ========================================================
+    # AUDIT LOG
+    # ========================================================
+
     audit_details = (
         f"Original paper: '{paper['filename']}'. "
-        f"Uploaded file: '{secure_filename(uploaded_file.filename)}'. "
+        f"Uploaded file: "
+        f"'{secure_filename(uploaded_file.filename)}'. "
         f"Result: {result}. "
         f"Similarity: {similarity}%."
     )
@@ -556,14 +706,25 @@ def verify_paper():
         audit_details
     )
 
+    # ========================================================
+    # RESULT PAGE
+    # ========================================================
+
     return render_template(
         "verification_result.html",
+
         original_paper=paper,
+
         suspected_filename=uploaded_file.filename,
+
         original_fingerprint=original_hash,
+
         suspected_fingerprint=uploaded_hash,
+
         result=result,
+
         result_message=result_message,
+
         similarity=similarity
     )
 
@@ -574,6 +735,7 @@ def verify_paper():
 
 @app.route("/upload-paper", methods=["POST"])
 def upload_paper():
+
     if "paper" not in request.files:
         add_audit_log(
             "SECURITY EVENT",
@@ -607,7 +769,10 @@ def upload_paper():
     if not uploaded_file.filename.lower().endswith(".pdf"):
         add_audit_log(
             "SECURITY EVENT",
-            f"Upload rejected non-PDF file '{uploaded_file.filename}'."
+            (
+                "Upload rejected non-PDF file "
+                f"'{uploaded_file.filename}'."
+            )
         )
 
         return show_error(
@@ -623,7 +788,10 @@ def upload_paper():
     if not is_valid_pdf(file_data):
         add_audit_log(
             "SECURITY EVENT",
-            f"Upload rejected invalid PDF file '{uploaded_file.filename}'."
+            (
+                "Upload rejected invalid PDF file "
+                f"'{uploaded_file.filename}'."
+            )
         )
 
         return show_error(
@@ -634,9 +802,15 @@ def upload_paper():
             400
         )
 
-    fingerprint = hashlib.sha256(file_data).hexdigest()
+    # Generate fingerprint
+    fingerprint = hashlib.sha256(
+        file_data
+    ).hexdigest()
 
-    original_filename = secure_filename(uploaded_file.filename)
+    # Clean filename
+    original_filename = secure_filename(
+        uploaded_file.filename
+    )
 
     if original_filename == "":
         add_audit_log(
@@ -646,22 +820,31 @@ def upload_paper():
 
         return show_error(
             "Invalid Filename",
-            "The selected file has an invalid filename. Please rename it and try again.",
+            (
+                "The selected file has an invalid filename. "
+                "Please rename it and try again."
+            ),
             url_for("upload_page"),
             "Try Again",
             400
         )
 
+    # Check duplicate fingerprint
     conn = get_db_connection()
 
     existing_paper = conn.execute(
-        "SELECT * FROM papers WHERE fingerprint = ?",
+        """
+        SELECT *
+        FROM papers
+        WHERE fingerprint = ?
+        """,
         (fingerprint,)
     ).fetchone()
 
     conn.close()
 
     if existing_paper is not None:
+
         add_audit_log(
             "DUPLICATE UPLOAD BLOCKED",
             (
@@ -681,34 +864,51 @@ def upload_paper():
             400
         )
 
-    unique_filename = f"{uuid.uuid4().hex}_{original_filename}"
+    # Create unique stored filename
+    unique_filename = (
+        f"{uuid.uuid4().hex}_{original_filename}"
+    )
 
     file_path = os.path.join(
         app.config["UPLOAD_FOLDER"],
         unique_filename
     )
 
+    # Save PDF physically
     try:
-        with open(file_path, "wb") as saved_file:
+
+        with open(
+            file_path,
+            "wb"
+        ) as saved_file:
             saved_file.write(file_data)
 
     except OSError as error:
+
         print("FILE SAVE ERROR:", error)
 
         add_audit_log(
             "SECURITY EVENT",
-            f"Server failed to save uploaded file '{original_filename}'."
+            (
+                "Server failed to save uploaded file "
+                f"'{original_filename}'."
+            )
         )
 
         return show_error(
             "Upload Failed",
-            "The server could not save the examination paper. Please try again.",
+            (
+                "The server could not save the examination paper. "
+                "Please try again."
+            ),
             url_for("upload_page"),
             "Try Again",
             500
         )
 
+    # Insert paper record into database
     try:
+
         conn = get_db_connection()
 
         conn.execute(
@@ -736,6 +936,7 @@ def upload_paper():
         conn.close()
 
     except sqlite3.Error as error:
+
         print("DATABASE INSERT ERROR:", error)
 
         if os.path.exists(file_path):
@@ -743,7 +944,10 @@ def upload_paper():
 
         add_audit_log(
             "SECURITY EVENT",
-            f"Database error occurred while registering '{original_filename}'."
+            (
+                "Database error occurred while registering "
+                f"'{original_filename}'."
+            )
         )
 
         return show_error(
@@ -754,9 +958,13 @@ def upload_paper():
             500
         )
 
+    # Log successful upload
     add_audit_log(
         "PAPER UPLOADED",
-        f"File '{original_filename}' was uploaded and fingerprinted successfully."
+        (
+            f"File '{original_filename}' was uploaded "
+            "and fingerprinted successfully."
+        )
     )
 
     return redirect(url_for("home"))
@@ -768,6 +976,7 @@ def upload_paper():
 
 @app.route("/admin")
 def admin_page():
+
     conn = get_db_connection()
 
     papers = conn.execute(
@@ -786,21 +995,34 @@ def admin_page():
     )
 
 
+# ============================================================
+# DELETE PAPER
+# ============================================================
+
 @app.route("/delete-paper/<int:paper_id>", methods=["POST"])
 def delete_paper(paper_id):
+
     conn = get_db_connection()
 
     paper = conn.execute(
-        "SELECT * FROM papers WHERE id = ?",
+        """
+        SELECT *
+        FROM papers
+        WHERE id = ?
+        """,
         (paper_id,)
     ).fetchone()
 
     if paper is None:
+
         conn.close()
 
         add_audit_log(
             "SECURITY EVENT",
-            f"Deletion attempted for non-existent paper ID {paper_id}."
+            (
+                "Deletion attempted for non-existent "
+                f"paper ID {paper_id}."
+            )
         )
 
         return show_error(
@@ -814,16 +1036,22 @@ def delete_paper(paper_id):
     stored_path = find_stored_file(paper)
 
     conn.execute(
-        "DELETE FROM papers WHERE id = ?",
+        """
+        DELETE FROM papers
+        WHERE id = ?
+        """,
         (paper_id,)
     )
 
     conn.commit()
     conn.close()
 
+    # Delete physical PDF
     if stored_path and os.path.exists(stored_path):
+
         try:
             os.remove(stored_path)
+
         except OSError as error:
             print("FILE DELETE ERROR:", error)
 
@@ -844,10 +1072,15 @@ def delete_paper(paper_id):
 
 @app.route("/audit-trail")
 def audit_trail():
+
     conn = get_db_connection()
 
     audit_logs = conn.execute(
-        "SELECT * FROM audit_logs ORDER BY id DESC"
+        """
+        SELECT *
+        FROM audit_logs
+        ORDER BY id DESC
+        """
     ).fetchall()
 
     conn.close()
@@ -864,6 +1097,7 @@ def audit_trail():
 
 @app.errorhandler(500)
 def internal_server_error(error):
+
     print("INTERNAL SERVER ERROR:", error)
 
     return show_error(

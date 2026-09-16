@@ -51,14 +51,22 @@
             margin-bottom: 25px;
         }
 
-        .status-card.success {
-            background: rgba(22, 163, 74, 0.12);
-            border: 1px solid rgba(74, 222, 128, 0.4);
+        /* GREEN ZONE: 0 TO 49.999% */
+        .status-card.safe {
+            background: rgba(22, 163, 74, 0.13);
+            border: 1px solid rgba(74, 222, 128, 0.55);
         }
 
+        /* YELLOW ZONE: 50 TO 69.999% */
         .status-card.warning {
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.4);
+            background: rgba(245, 158, 11, 0.13);
+            border: 1px solid rgba(251, 191, 36, 0.6);
+        }
+
+        /* RED ZONE: EXACT MATCH OR 70% AND ABOVE */
+        .status-card.danger {
+            background: rgba(220, 38, 38, 0.14);
+            border: 1px solid rgba(248, 113, 113, 0.65);
         }
 
         .status-icon {
@@ -71,12 +79,16 @@
             margin-bottom: 12px;
         }
 
-        .status-card.success h2 {
+        .status-card.safe h2 {
             color: #86efac;
         }
 
         .status-card.warning h2 {
             color: #fcd34d;
+        }
+
+        .status-card.danger h2 {
+            color: #fca5a5;
         }
 
         .status-card p {
@@ -89,17 +101,41 @@
         .similarity-box {
             margin-top: 25px;
             padding: 22px;
-            border: 1px solid rgba(120, 150, 255, 0.35);
             border-radius: 16px;
-            background: rgba(80, 110, 220, 0.12);
             text-align: center;
+        }
+
+        .similarity-box.safe {
+            background: rgba(22, 163, 74, 0.14);
+            border: 1px solid rgba(74, 222, 128, 0.45);
+        }
+
+        .similarity-box.warning {
+            background: rgba(245, 158, 11, 0.14);
+            border: 1px solid rgba(251, 191, 36, 0.5);
+        }
+
+        .similarity-box.danger {
+            background: rgba(220, 38, 38, 0.14);
+            border: 1px solid rgba(248, 113, 113, 0.55);
         }
 
         .similarity-title {
             font-size: 18px;
             font-weight: 600;
-            color: #b8c7ff;
             margin-bottom: 10px;
+        }
+
+        .similarity-box.safe .similarity-title {
+            color: #86efac;
+        }
+
+        .similarity-box.warning .similarity-title {
+            color: #fcd34d;
+        }
+
+        .similarity-box.danger .similarity-title {
+            color: #fca5a5;
         }
 
         .similarity-percentage {
@@ -207,11 +243,19 @@
         }
 
         .same {
+            color: #fca5a5 !important;
+        }
+
+        .safe-text {
             color: #86efac !important;
         }
 
-        .different {
+        .warning-text {
             color: #fcd34d !important;
+        }
+
+        .danger-text {
+            color: #fca5a5 !important;
         }
 
         .result-actions {
@@ -278,104 +322,174 @@
                 <p>Digital fingerprint and text similarity comparison report</p>
             </div>
 
+
+            <!-- =====================================================
+                 EXACT MATCH: RED DANGER
+                 ===================================================== -->
+
             {% if result == "EXACT MATCH" %}
-                <div class="status-card success">
-                    <div class="status-icon">✓</div>
+
+                <div class="status-card danger">
+
+                    <div class="status-icon">🚨</div>
 
                     <h2>EXACT MATCH</h2>
 
                     <p>
                         {{ result_message }}
-                        The file contents are digitally identical.
+                        The uploaded file is digitally identical to the
+                        registered examination paper.
                     </p>
 
-                    {% if similarity > 0 %}
-                        <div class="similarity-box">
-                            <div class="similarity-title">
-                                📊 Text Similarity
-                            </div>
+                    <div class="similarity-box danger">
 
-                            <div class="similarity-percentage">
-                                {{ similarity }}%
-                            </div>
-
-                            <p class="similarity-description">
-                                The uploaded PDF has the same text as the
-                                registered examination paper.
-                            </p>
+                        <div class="similarity-title">
+                            📊 Text Similarity
                         </div>
-                    {% endif %}
+
+                        <div class="similarity-percentage">
+                            100%
+                        </div>
+
+                        <p class="similarity-description">
+                            Exact matches are classified as a high-risk result
+                            because the file is identical to the registered paper.
+                        </p>
+
+                    </div>
+
                 </div>
 
+
+            <!-- =====================================================
+                 MODIFIED COPY: RED DANGER
+                 ===================================================== -->
+
             {% elif result == "MODIFIED COPY DETECTED" %}
-                <div class="status-card warning">
-                    <div class="status-icon">⚠</div>
+
+                <div class="status-card danger">
+
+                    <div class="status-icon">🚨</div>
 
                     <h2>MODIFIED COPY DETECTED</h2>
 
                     <p>
                         {{ result_message }}
-                        The file fingerprint is different, but the text is
-                        highly similar to the registered examination paper.
+                        The file fingerprint is different, but the extracted
+                        text is highly similar to the registered paper.
                     </p>
 
-                    {% if similarity > 0 %}
-                        <div class="similarity-box">
-                            <div class="similarity-title">
-                                📊 Text Similarity
-                            </div>
+                    <div class="similarity-box danger">
 
-                            <div class="similarity-percentage">
-                                {{ similarity }}%
-                            </div>
-
-                            <p class="similarity-description">
-                                The uploaded PDF may be a slightly modified
-                                version of the registered examination paper.
-                            </p>
+                        <div class="similarity-title">
+                            📊 Text Similarity
                         </div>
-                    {% endif %}
+
+                        <div class="similarity-percentage">
+                            {{ similarity }}%
+                        </div>
+
+                        <p class="similarity-description">
+                            This result is in the red danger zone because the
+                            similarity is 70% or higher.
+                        </p>
+
+                    </div>
+
                 </div>
 
-            {% else %}
-                <div class="status-card warning">
-                    <div class="status-icon">⚠</div>
 
-                    <h2>DIFFERENT FILE</h2>
+            <!-- =====================================================
+                 YELLOW ZONE: 50 TO 69.999%
+                 ===================================================== -->
+
+            {% elif result == "POSSIBLE SIMILARITY" %}
+
+                <div class="status-card warning">
+
+                    <div class="status-icon">⚠️</div>
+
+                    <h2>POSSIBLE SIMILARITY</h2>
 
                     <p>
                         {{ result_message }}
-                        The suspected file does not have the same digital
-                        fingerprint as the registered paper.
+                        Manual checking is recommended before making a decision.
                     </p>
 
-                    {% if similarity > 0 %}
-                        <div class="similarity-box">
-                            <div class="similarity-title">
-                                📊 Text Similarity
-                            </div>
+                    <div class="similarity-box warning">
 
-                            <div class="similarity-percentage">
-                                {{ similarity }}%
-                            </div>
-
-                            <p class="similarity-description">
-                                This percentage represents the similarity
-                                between the uploaded PDF and the registered
-                                examination paper.
-                            </p>
+                        <div class="similarity-title">
+                            📊 Text Similarity
                         </div>
-                    {% endif %}
+
+                        <div class="similarity-percentage">
+                            {{ similarity }}%
+                        </div>
+
+                        <p class="similarity-description">
+                            This result is in the yellow warning zone because
+                            the similarity is between 50% and 69.999%.
+                        </p>
+
+                    </div>
+
                 </div>
+
+
+            <!-- =====================================================
+                 GREEN ZONE: 0 TO 49.999%
+                 ===================================================== -->
+
+            {% else %}
+
+                <div class="status-card safe">
+
+                    <div class="status-icon">✅</div>
+
+                    <h2>DIFFERENT PAPER</h2>
+
+                    <p>
+                        {{ result_message }}
+                        The uploaded paper has low similarity to the
+                        registered examination paper.
+                    </p>
+
+                    <div class="similarity-box safe">
+
+                        <div class="similarity-title">
+                            📊 Text Similarity
+                        </div>
+
+                        <div class="similarity-percentage">
+                            {{ similarity }}%
+                        </div>
+
+                        <p class="similarity-description">
+                            This result is in the green safe zone because
+                            the similarity is below 50%.
+                        </p>
+
+                    </div>
+
+                </div>
+
             {% endif %}
+
+            
+
+            <!-- =====================================================
+                 PAPER DETAILS
+                 ===================================================== -->
 
             <div class="details-grid">
 
                 <div class="details-card">
+
                     <h3>Registered Paper</h3>
 
                     <div class="detail-item">
                         <span class="detail-label">Filename</span>
+
                         <div class="detail-value">
                             {{ original_paper["filename"] }}
                         </div>
@@ -383,6 +497,7 @@
 
                     <div class="detail-item">
                         <span class="detail-label">Paper ID</span>
+
                         <div class="detail-value">
                             #{{ original_paper["id"] }}
                         </div>
@@ -390,6 +505,7 @@
 
                     <div class="detail-item">
                         <span class="detail-label">Uploaded By</span>
+
                         <div class="detail-value">
                             {{ original_paper["uploaded_by"] }}
                         </div>
@@ -397,17 +513,22 @@
 
                     <div class="detail-item">
                         <span class="detail-label">Uploaded At</span>
+
                         <div class="detail-value">
                             {{ original_paper["uploaded_at"] }}
                         </div>
                     </div>
+
                 </div>
 
+
                 <div class="details-card">
+
                     <h3>Suspected Paper</h3>
 
                     <div class="detail-item">
                         <span class="detail-label">Filename</span>
+
                         <div class="detail-value">
                             {{ suspected_filename }}
                         </div>
@@ -415,6 +536,7 @@
 
                     <div class="detail-item">
                         <span class="detail-label">Verification Type</span>
+
                         <div class="detail-value">
                             SHA-256 and Text Similarity Comparison
                         </div>
@@ -422,38 +544,79 @@
 
                     <div class="detail-item">
                         <span class="detail-label">Verification Status</span>
+
                         <div class="detail-value">
+
                             {% if result == "EXACT MATCH" %}
-                                <span class="same">Identical</span>
-                            {% elif result == "MODIFIED COPY DETECTED" %}
-                                <span class="different">
-                                    Possible Modified Copy
+
+                                <span class="danger-text">
+                                    Exact Match - High Risk
                                 </span>
+
+                            {% elif result == "MODIFIED COPY DETECTED" %}
+
+                                <span class="danger-text">
+                                    Modified Copy - High Risk
+                                </span>
+
+                            {% elif result == "POSSIBLE SIMILARITY" %}
+
+                                <span class="warning-text">
+                                    Possible Similarity - Review Required
+                                </span>
+
                             {% else %}
-                                <span class="different">Not Identical</span>
+
+                                <span class="safe-text">
+                                    Low Similarity - Different Paper
+                                </span>
+
                             {% endif %}
+
                         </div>
                     </div>
+
                 </div>
 
             </div>
 
+
+
+            <!-- =====================================================
+                 FINGERPRINT COMPARISON
+                 ===================================================== -->
+
             <div class="comparison-card">
+
                 <h3>Fingerprint Comparison</h3>
 
                 <div class="comparison-row">
+
                     <span>Registered fingerprint</span>
 
                     <span>
+
                         {% if original_fingerprint == suspected_fingerprint %}
-                            <span class="same">Same fingerprint</span>
+
+                            <span class="danger-text">
+                                Same fingerprint
+                            </span>
+
                         {% else %}
-                            <span class="different">Different fingerprint</span>
+
+                            <span class="warning-text">
+                                Different fingerprint
+                            </span>
+
                         {% endif %}
+
                     </span>
+
                 </div>
 
+
                 <div class="detail-item">
+
                     <span class="detail-label">
                         Registered Paper SHA-256
                     </span>
@@ -461,9 +624,12 @@
                     <div class="fingerprint-box">
                         {{ original_fingerprint }}
                     </div>
+
                 </div>
 
+
                 <div class="detail-item">
+
                     <span class="detail-label">
                         Suspected Paper SHA-256
                     </span>
@@ -471,10 +637,19 @@
                     <div class="fingerprint-box">
                         {{ suspected_fingerprint }}
                     </div>
+
                 </div>
+
             </div>
 
+
+
+            <!-- =====================================================
+                 ACTION BUTTONS
+                 ===================================================== -->
+
             <div class="result-actions">
+
                 <a href="/verify" class="result-button">
                     Verify Another Paper
                 </a>
@@ -482,6 +657,7 @@
                 <a href="/" class="result-button secondary">
                     Back to Dashboard
                 </a>
+
             </div>
 
         </div>
