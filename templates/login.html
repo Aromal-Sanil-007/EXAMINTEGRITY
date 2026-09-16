@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login | EXAMINTEGRITY</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #080808;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #111;
+            border: 1px solid #292929;
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 35px;
+        }
+
+        .security-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bbb;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            background: #080808;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 9px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #777;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: white;
+            color: black;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .login-button:hover {
+            background: #ddd;
+        }
+
+        .error-message {
+            background: #2a1111;
+            border: 1px solid #633333;
+            color: #ff8f8f;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .security-note {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="security-icon">
+            🛡️
+        </div>
+
+        <div class="logo">
+            EXAMINTEGRITY
+        </div>
+
+        <div class="subtitle">
+            Administrator Control Center
+        </div>
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        <form method="POST"
+              action="{{ url_for('admin_login') }}">
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter admin username"
+                    required
+                    autocomplete="username"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter admin password"
+                    required
+                    autocomplete="current-password"
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-button">
+
+                LOGIN TO ADMIN PANEL
+
+            </button>
+
+        </form>
+
+        <a
+            href="{{ url_for('home') }}"
+            class="back-link">
+
+            ← Back to Dashboard
+
+        </a>
+
+        <div class="security-note">
+
+            🔒 Administrator authentication is required
+            to access protected control functions.
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

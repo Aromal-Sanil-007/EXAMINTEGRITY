@@ -1,9 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard | EXAMINTEGRITY</title>
 
@@ -11,449 +14,1221 @@
           href="{{ url_for('static', filename='style.css') }}">
 
     <style>
+
+        /* ==================================================
+           DASHBOARD
+           ================================================== */
+
         .dashboard-page {
+
             min-height: 100vh;
+
             padding: 30px;
+
             background:
-                radial-gradient(circle at top right,
-                rgba(37, 99, 235, 0.15),
-                transparent 35%),
+                radial-gradient(
+                    circle at top right,
+                    rgba(37, 99, 235, 0.15),
+                    transparent 35%
+                ),
                 #080b12;
         }
 
+
         .dashboard-container {
+
             max-width: 1250px;
+
             margin: auto;
         }
 
+
+        /* ==================================================
+           HEADER
+           ================================================== */
+
         .dashboard-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 20px;
+
             margin-bottom: 30px;
         }
 
+
         .brand-section h1 {
+
             color: #ffffff;
+
             font-size: 32px;
+
             margin-bottom: 7px;
         }
 
+
         .brand-section p {
+
             color: #9ca8bd;
+
             font-size: 14px;
         }
 
+
         .header-badge {
+
             padding: 10px 16px;
+
             color: #86efac;
-            background: rgba(34, 197, 94, 0.12);
-            border: 1px solid rgba(74, 222, 128, 0.25);
+
+            background:
+                rgba(34, 197, 94, 0.12);
+
+            border:
+                1px solid rgba(74, 222, 128, 0.25);
+
             border-radius: 30px;
+
             font-size: 12px;
+
             font-weight: 600;
         }
 
+
+        /* ==================================================
+           STATISTICS
+           ================================================== */
+
         .stats-grid {
+
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
             gap: 18px;
+
             margin-bottom: 30px;
         }
 
+
         .stat-card {
+
             padding: 23px;
-            background: rgba(20, 25, 38, 0.95);
-            border: 1px solid rgba(148, 163, 184, 0.15);
+
+            background:
+                rgba(20, 25, 38, 0.95);
+
+            border:
+                1px solid rgba(148, 163, 184, 0.15);
+
             border-radius: 18px;
+
             transition: 0.25s ease;
         }
 
+
         .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(96, 165, 250, 0.4);
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                rgba(96, 165, 250, 0.4);
         }
 
+
         .stat-label {
+
             color: #9ca8bd;
+
             font-size: 13px;
+
             margin-bottom: 12px;
         }
 
+
         .stat-number {
+
             color: #ffffff;
+
             font-size: 32px;
+
             font-weight: 700;
         }
 
+
         .stat-description {
+
             color: #64748b;
+
             font-size: 12px;
+
             margin-top: 8px;
         }
 
+
         .stat-icon {
+
             float: right;
+
             font-size: 25px;
         }
 
+
+        /* ==================================================
+           QUICK ACTIONS
+           ================================================== */
+
         .quick-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
             margin-bottom: 30px;
         }
 
-        .action-button {
-            display: inline-block;
-            padding: 13px 20px;
-            color: #ffffff;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-radius: 10px;
+
+        /* ==================================================
+           QUICK ACTION CARD
+           ================================================== */
+
+        .quick-action-card {
+
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            min-height: 95px;
+
+            padding: 18px;
+
+            box-sizing: border-box;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #171717,
+                    #0e0e0e
+                );
+
+            border:
+                1px solid #292929;
+
+            border-radius: 15px;
+
+            color: white;
+
             text-decoration: none;
-            font-size: 14px;
+
+            overflow: hidden;
+
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+        }
+
+
+        /* LEFT ACCENT */
+
+        .quick-action-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+
+            top: 0;
+
+            width: 3px;
+
+            height: 100%;
+
+            background: #777;
+
+            opacity: 0.5;
+
+            transition:
+                opacity 0.25s ease,
+                width 0.25s ease;
+        }
+
+
+        /* HOVER */
+
+        .quick-action-card:hover {
+
+            transform:
+                translateY(-4px);
+
+            border-color: #4a4a4a;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #1d1d1d,
+                    #111111
+                );
+
+            box-shadow:
+                0 12px 30px
+                rgba(0, 0, 0, 0.4);
+        }
+
+
+        .quick-action-card:hover::before {
+
+            width: 4px;
+
+            opacity: 1;
+        }
+
+
+        /* ==================================================
+           QUICK ACTION ICON
+           ================================================== */
+
+        .quick-action-icon {
+
+            width: 46px;
+
+            height: 46px;
+
+            min-width: 46px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #202020;
+
+            border:
+                1px solid #333;
+
+            border-radius: 11px;
+
+            font-size: 21px;
+
+            box-sizing: border-box;
+
+            transition:
+                transform 0.25s ease,
+                background 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+
+        .quick-action-card:hover
+        .quick-action-icon {
+
+            transform:
+                scale(1.08);
+
+            background: #282828;
+
+            border-color: #444;
+        }
+
+
+        /* ==================================================
+           QUICK ACTION TEXT
+           ================================================== */
+
+        .quick-action-content {
+
+            flex: 1;
+
+            min-width: 0;
+        }
+
+
+        .quick-action-content h3 {
+
+            margin:
+                0 0 6px 0;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
             font-weight: 600;
-            transition: 0.25s ease;
+
+            letter-spacing: 0.2px;
         }
 
-        .action-button.secondary {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.13);
+
+        .quick-action-content p {
+
+            margin: 0;
+
+            color: #858585;
+
+            font-size: 12px;
+
+            line-height: 1.4;
         }
 
-        .action-button:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.12);
+
+        /* ==================================================
+           QUICK ACTION ARROW
+           ================================================== */
+
+        .quick-action-arrow {
+
+            color: #666;
+
+            font-size: 21px;
+
+            line-height: 1;
+
+            transition:
+                transform 0.25s ease,
+                color 0.25s ease;
         }
+
+
+        .quick-action-card:hover
+        .quick-action-arrow {
+
+            transform:
+                translateX(5px);
+
+            color: white;
+        }
+
+
+        /* ==================================================
+           CONTENT GRID
+           ================================================== */
 
         .content-grid {
+
             display: grid;
-            grid-template-columns: 1.6fr 1fr;
+
+            grid-template-columns:
+                1.6fr 1fr;
+
             gap: 22px;
         }
 
+
+        /* ==================================================
+           DASHBOARD CARDS
+           ================================================== */
+
         .dashboard-card {
+
             min-width: 0;
+
             padding: 25px;
-            background: rgba(20, 25, 38, 0.95);
-            border: 1px solid rgba(148, 163, 184, 0.15);
+
+            background:
+                rgba(20, 25, 38, 0.95);
+
+            border:
+                1px solid
+                rgba(148, 163, 184, 0.15);
+
             border-radius: 18px;
         }
 
+
         .card-heading {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 15px;
+
             margin-bottom: 22px;
         }
 
+
         .card-heading h2 {
+
             color: #ffffff;
+
             font-size: 20px;
         }
 
+
         .card-heading span {
+
             color: #64748b;
+
             font-size: 12px;
         }
 
+
+        /* ==================================================
+           TABLE
+           ================================================== */
+
         .table-wrapper {
+
             overflow-x: auto;
         }
 
+
         table {
+
             width: 100%;
+
             border-collapse: collapse;
+
             min-width: 500px;
         }
 
+
         th {
+
             padding: 13px 10px;
+
             color: #94a3b8;
+
             font-size: 11px;
+
             text-align: left;
+
             text-transform: uppercase;
+
             letter-spacing: 0.6px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+
+            border-bottom:
+                1px solid
+                rgba(148, 163, 184, 0.16);
         }
+
 
         td {
+
             padding: 16px 10px;
+
             color: #dbeafe;
+
             font-size: 13px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.09);
+
+            border-bottom:
+                1px solid
+                rgba(148, 163, 184, 0.09);
         }
 
+
         tr:last-child td {
+
             border-bottom: none;
         }
 
+
         .paper-id {
+
             color: #60a5fa;
+
             font-weight: 700;
         }
 
+
+        /* ==================================================
+           STATUS
+           ================================================== */
+
         .status-pill {
+
             display: inline-block;
+
             padding: 5px 9px;
+
             color: #86efac;
-            background: rgba(34, 197, 94, 0.12);
+
+            background:
+                rgba(34, 197, 94, 0.12);
+
             border-radius: 20px;
+
             font-size: 11px;
+
             font-weight: 600;
         }
 
+
+        /* ==================================================
+           AUDIT ACTIVITY
+           ================================================== */
+
         .audit-item {
+
             padding: 15px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+
+            border-bottom:
+                1px solid
+                rgba(148, 163, 184, 0.12);
         }
 
+
         .audit-item:last-child {
+
             border-bottom: none;
         }
 
+
         .audit-action {
+
             color: #e2e8f0;
+
             font-size: 13px;
+
             font-weight: 600;
+
             margin-bottom: 6px;
         }
 
+
         .audit-details {
+
             color: #94a3b8;
+
             font-size: 12px;
+
             line-height: 1.6;
+
             overflow-wrap: anywhere;
         }
 
+
         .audit-time {
+
             color: #64748b;
+
             font-size: 11px;
+
             margin-top: 7px;
         }
 
+
+        /* ==================================================
+           EMPTY STATE
+           ================================================== */
+
         .empty-state {
+
             padding: 35px 10px;
+
             color: #64748b;
+
             text-align: center;
+
             font-size: 13px;
         }
 
+
+        /* ==================================================
+           VIEW ALL
+           ================================================== */
+
         .view-all {
+
             display: inline-block;
+
             margin-top: 18px;
+
             color: #60a5fa;
+
             text-decoration: none;
+
             font-size: 13px;
+
             font-weight: 600;
         }
 
+
         .view-all:hover {
+
             color: #93c5fd;
         }
 
-        @media (max-width: 1000px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+
+        /* ==================================================
+           RESPONSIVE - TABLET
+           ================================================== */
+
+        @media (max-width: 1100px) {
+
+            .quick-actions {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
-        @media (max-width: 600px) {
-            .dashboard-page {
-                padding: 20px 14px;
+
+        @media (max-width: 1000px) {
+
+            .stats-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
+
+            .content-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        /* ==================================================
+           RESPONSIVE - MOBILE
+           ================================================== */
+
+        @media (max-width: 600px) {
+
+            .dashboard-page {
+
+                padding:
+                    20px 14px;
+            }
+
+
             .dashboard-header {
+
                 align-items: flex-start;
+
                 flex-direction: column;
             }
 
+
             .brand-section h1 {
+
                 font-size: 27px;
             }
 
+
             .stats-grid {
+
                 grid-template-columns: 1fr;
             }
 
+
+            .quick-actions {
+
+                grid-template-columns: 1fr;
+
+                gap: 12px;
+            }
+
+
             .dashboard-card {
+
                 padding: 19px;
             }
+
+
+            .quick-action-card {
+
+                min-height: 85px;
+            }
+
         }
+
     </style>
+
 </head>
 
+
 <body>
-    <div class="dashboard-page">
-        <div class="dashboard-container">
 
-            <header class="dashboard-header">
-                <div class="brand-section">
-                    <h1>EXAMINTEGRITY</h1>
-                    <p>Secure Examination Paper Verification System</p>
+<div class="dashboard-page">
+
+    <div class="dashboard-container">
+
+
+        <!-- ==================================================
+             HEADER
+             ================================================== -->
+
+        <header class="dashboard-header">
+
+            <div class="brand-section">
+
+                <h1>
+                    EXAMINTEGRITY
+                </h1>
+
+                <p>
+                    Secure Examination Paper Verification System
+                </p>
+
+            </div>
+
+
+            <div class="header-badge">
+
+                ● SYSTEM ACTIVE
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ==================================================
+             STATISTICS
+             ================================================== -->
+
+        <section class="stats-grid">
+
+
+            <!-- TOTAL PAPERS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📄
                 </div>
 
-                <div class="header-badge">
-                    ● SYSTEM ACTIVE
-                </div>
-            </header>
-
-            <section class="stats-grid">
-
-                <div class="stat-card">
-                    <div class="stat-icon">📄</div>
-                    <div class="stat-label">Total Papers</div>
-                    <div class="stat-number">{{ total_papers }}</div>
-                    <div class="stat-description">
-                        Registered examination papers
-                    </div>
+                <div class="stat-label">
+                    Total Papers
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">🔍</div>
-                    <div class="stat-label">Total Verifications</div>
-                    <div class="stat-number">{{ total_verifications }}</div>
-                    <div class="stat-description">
-                        Verification attempts
-                    </div>
+                <div class="stat-number">
+                    {{ total_papers }}
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-label">Exact Matches</div>
-                    <div class="stat-number">{{ exact_matches }}</div>
-                    <div class="stat-description">
-                        Identical digital fingerprints
-                    </div>
+                <div class="stat-description">
+                    Registered examination papers
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">⚠️</div>
-                    <div class="stat-label">Different Files</div>
-                    <div class="stat-number">{{ different_files }}</div>
-                    <div class="stat-description">
-                        Non-identical fingerprints
-                    </div>
+            </div>
+
+
+            <!-- TOTAL VERIFICATIONS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔍
                 </div>
 
-            </section>
+                <div class="stat-label">
+                    Total Verifications
+                </div>
 
-           <section class="quick-actions">
-    <a href="/upload" class="action-button">
-        + Upload New Paper
-    </a>
+                <div class="stat-number">
+                    {{ total_verifications }}
+                </div>
 
-    <a href="/verify" class="action-button">
-        🔍 Verify Paper
-    </a>
+                <div class="stat-description">
+                    Verification attempts
+                </div>
 
-    <a href="/audit-trail" class="action-button secondary">
-        View Full Audit Trail
-    </a>
+            </div>
 
-    <a href="{{ url_for('admin_page') }}" class="action-button">
-        🛡️ Admin Control
-    </a>
-</section>
-            <section class="content-grid">
 
-                <div class="dashboard-card">
-                    <div class="card-heading">
-                        <h2>Registered Papers</h2>
-                        <span>{{ total_papers }} total</span>
-                    </div>
+            <!-- EXACT MATCHES -->
 
-                    {% if papers %}
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div class="stat-label">
+                    Exact Matches
+                </div>
+
+                <div class="stat-number">
+                    {{ exact_matches }}
+                </div>
+
+                <div class="stat-description">
+                    Identical digital fingerprints
+                </div>
+
+            </div>
+
+
+            <!-- DIFFERENT FILES -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⚠️
+                </div>
+
+                <div class="stat-label">
+                    Different Files
+                </div>
+
+                <div class="stat-number">
+                    {{ different_files }}
+                </div>
+
+                <div class="stat-description">
+                    Non-identical fingerprints
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             QUICK ACTIONS
+             ================================================== -->
+
+        <section class="quick-actions">
+
+
+            <!-- UPLOAD PAPER -->
+
+            <a
+                href="{{ url_for('upload_page') }}"
+                class="quick-action-card"
+            >
+
+                <div class="quick-action-icon">
+                    📄
+                </div>
+
+                <div class="quick-action-content">
+
+                    <h3>
+                        Upload Paper
+                    </h3>
+
+                    <p>
+                        Register a new examination paper
+                    </p>
+
+                </div>
+
+                <div class="quick-action-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+
+            <!-- VERIFY PAPER -->
+
+            <a
+                href="{{ url_for('verify_page') }}"
+                class="quick-action-card"
+            >
+
+                <div class="quick-action-icon">
+                    🔍
+                </div>
+
+                <div class="quick-action-content">
+
+                    <h3>
+                        Verify Paper
+                    </h3>
+
+                    <p>
+                        Check a paper for authenticity
+                    </p>
+
+                </div>
+
+                <div class="quick-action-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+
+            <!-- AUDIT TRAIL -->
+
+            <a
+                href="{{ url_for('audit_trail') }}"
+                class="quick-action-card"
+            >
+
+                <div class="quick-action-icon">
+                    📋
+                </div>
+
+                <div class="quick-action-content">
+
+                    <h3>
+                        Audit Trail
+                    </h3>
+
+                    <p>
+                        View system activity and records
+                    </p>
+
+                </div>
+
+                <div class="quick-action-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+
+            <!-- ADMIN CONTROL -->
+
+            <a
+                href="{{ url_for('admin_login') }}"
+                class="quick-action-card"
+            >
+
+                <div class="quick-action-icon">
+                    🛡️
+                </div>
+
+                <div class="quick-action-content">
+
+                    <h3>
+                        Admin Control
+                    </h3>
+
+                    <p>
+                        Manage papers and security
+                    </p>
+
+                </div>
+
+                <div class="quick-action-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+        </section>
+
+
+
+        <!-- ==================================================
+             CONTENT
+             ================================================== -->
+
+        <section class="content-grid">
+
+
+            <!-- ==================================================
+                 REGISTERED PAPERS
+                 ================================================== -->
+
+            <div class="dashboard-card">
+
+
+                <div class="card-heading">
+
+                    <h2>
+                        Registered Papers
+                    </h2>
+
+                    <span>
+                        {{ total_papers }} total
+                    </span>
+
+                </div>
+
+
+                {% if papers %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        ID
+                                    </th>
+
+                                    <th>
+                                        Filename
+                                    </th>
+
+                                    <th>
+                                        Uploaded By
+                                    </th>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for paper in papers %}
+
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Filename</th>
-                                        <th>Uploaded By</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
+
+                                        <td class="paper-id">
+                                            #{{ paper["id"] }}
+                                        </td>
+
+                                        <td>
+                                            {{ paper["filename"] }}
+                                        </td>
+
+                                        <td>
+                                            {{ paper["uploaded_by"] }}
+                                        </td>
+
+                                        <td>
+                                            {{ paper["uploaded_at"] }}
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status-pill">
+                                                Registered
+                                            </span>
+
+                                        </td>
+
                                     </tr>
-                                </thead>
 
-                                <tbody>
-                                    {% for paper in papers %}
-                                        <tr>
-                                            <td class="paper-id">
-                                                #{{ paper["id"] }}
-                                            </td>
+                                {% endfor %}
 
-                                            <td>
-                                                {{ paper["filename"] }}
-                                            </td>
+                            </tbody>
 
-                                            <td>
-                                                {{ paper["uploaded_by"] }}
-                                            </td>
+                        </table>
 
-                                            <td>
-                                                {{ paper["uploaded_at"] }}
-                                            </td>
-
-                                            <td>
-                                                <span class="status-pill">
-                                                    Registered
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="empty-state">
-                            No examination papers have been registered yet.
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-heading">
-                        <h2>Recent Activity</h2>
-                        <span>Latest 10</span>
                     </div>
 
-                    {% if audit_logs %}
-                        {% for log in audit_logs %}
-                            <div class="audit-item">
-                                <div class="audit-action">
-                                    {{ log["action"] }}
-                                </div>
+                {% else %}
 
-                                <div class="audit-details">
-                                    {{ log["details"] }}
-                                </div>
+                    <div class="empty-state">
 
-                                <div class="audit-time">
-                                    {{ log["created_at"] }}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state">
-                            No activity recorded yet.
-                        </div>
-                    {% endif %}
+                        No examination papers have been
+                        registered yet.
 
-                    <a href="/audit-trail" class="view-all">
-                        View all audit activity →
-                    </a>
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 RECENT ACTIVITY
+                 ================================================== -->
+
+            <div class="dashboard-card">
+
+
+                <div class="card-heading">
+
+                    <h2>
+                        Recent Activity
+                    </h2>
+
+                    <span>
+                        Latest 10
+                    </span>
+
                 </div>
 
-            </section>
 
-        </div>
+                {% if audit_logs %}
+
+                    {% for log in audit_logs %}
+
+                        <div class="audit-item">
+
+                            <div class="audit-action">
+
+                                {{ log["action"] }}
+
+                            </div>
+
+
+                            <div class="audit-details">
+
+                                {{ log["details"] }}
+
+                            </div>
+
+
+                            <div class="audit-time">
+
+                                {{ log["created_at"] }}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        No activity recorded yet.
+
+                    </div>
+
+                {% endif %}
+
+
+                <a
+                    href="{{ url_for('audit_trail') }}"
+                    class="view-all"
+                >
+
+                    View all audit activity →
+
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
     </div>
+
+</div>
+
 </body>
+
 </html>
