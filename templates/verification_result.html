@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,9 +14,11 @@
             min-height: 100vh;
             padding: 35px 20px;
             background:
-                radial-gradient(circle at top right,
-                rgba(59, 130, 246, 0.14),
-                transparent 35%),
+                radial-gradient(
+                    circle at top right,
+                    rgba(59, 130, 246, 0.14),
+                    transparent 35%
+                ),
                 #080b12;
         }
 
@@ -83,6 +84,36 @@
             line-height: 1.7;
             margin: 0 auto;
             max-width: 650px;
+        }
+
+        .similarity-box {
+            margin-top: 25px;
+            padding: 22px;
+            border: 1px solid rgba(120, 150, 255, 0.35);
+            border-radius: 16px;
+            background: rgba(80, 110, 220, 0.12);
+            text-align: center;
+        }
+
+        .similarity-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #b8c7ff;
+            margin-bottom: 10px;
+        }
+
+        .similarity-percentage {
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .similarity-description {
+            margin: 0;
+            color: #c4c9dc;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .details-grid {
@@ -244,7 +275,7 @@
 
             <div class="result-header">
                 <h1>Verification Result</h1>
-                <p>Digital fingerprint comparison report</p>
+                <p>Digital fingerprint and text similarity comparison report</p>
             </div>
 
             {% if result == "EXACT MATCH" %}
@@ -257,7 +288,55 @@
                         {{ result_message }}
                         The file contents are digitally identical.
                     </p>
+
+                    {% if similarity > 0 %}
+                        <div class="similarity-box">
+                            <div class="similarity-title">
+                                📊 Text Similarity
+                            </div>
+
+                            <div class="similarity-percentage">
+                                {{ similarity }}%
+                            </div>
+
+                            <p class="similarity-description">
+                                The uploaded PDF has the same text as the
+                                registered examination paper.
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
+
+            {% elif result == "MODIFIED COPY DETECTED" %}
+                <div class="status-card warning">
+                    <div class="status-icon">⚠</div>
+
+                    <h2>MODIFIED COPY DETECTED</h2>
+
+                    <p>
+                        {{ result_message }}
+                        The file fingerprint is different, but the text is
+                        highly similar to the registered examination paper.
+                    </p>
+
+                    {% if similarity > 0 %}
+                        <div class="similarity-box">
+                            <div class="similarity-title">
+                                📊 Text Similarity
+                            </div>
+
+                            <div class="similarity-percentage">
+                                {{ similarity }}%
+                            </div>
+
+                            <p class="similarity-description">
+                                The uploaded PDF may be a slightly modified
+                                version of the registered examination paper.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
             {% else %}
                 <div class="status-card warning">
                     <div class="status-icon">⚠</div>
@@ -266,9 +345,27 @@
 
                     <p>
                         {{ result_message }}
-                        The suspected file does not have the same
-                        digital fingerprint as the registered paper.
+                        The suspected file does not have the same digital
+                        fingerprint as the registered paper.
                     </p>
+
+                    {% if similarity > 0 %}
+                        <div class="similarity-box">
+                            <div class="similarity-title">
+                                📊 Text Similarity
+                            </div>
+
+                            <div class="similarity-percentage">
+                                {{ similarity }}%
+                            </div>
+
+                            <p class="similarity-description">
+                                This percentage represents the similarity
+                                between the uploaded PDF and the registered
+                                examination paper.
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
 
@@ -319,7 +416,7 @@
                     <div class="detail-item">
                         <span class="detail-label">Verification Type</span>
                         <div class="detail-value">
-                            SHA-256 Fingerprint Comparison
+                            SHA-256 and Text Similarity Comparison
                         </div>
                     </div>
 
@@ -328,6 +425,10 @@
                         <div class="detail-value">
                             {% if result == "EXACT MATCH" %}
                                 <span class="same">Identical</span>
+                            {% elif result == "MODIFIED COPY DETECTED" %}
+                                <span class="different">
+                                    Possible Modified Copy
+                                </span>
                             {% else %}
                                 <span class="different">Not Identical</span>
                             {% endif %}
@@ -342,6 +443,7 @@
 
                 <div class="comparison-row">
                     <span>Registered fingerprint</span>
+
                     <span>
                         {% if original_fingerprint == suspected_fingerprint %}
                             <span class="same">Same fingerprint</span>
